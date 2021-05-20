@@ -1,0 +1,90 @@
+﻿@*use this for the fake AjaxOptions since ajax helpers were dropped in .net core*@
+@model IPagedList<Phongban>
+@*import this so we get our HTML Helper*@
+@using X.PagedList.Mvc.Core;
+
+@*import this so we can cast our list to IPagedList (only necessary because ViewBag is dynamic)*@
+@using X.PagedList;
+@using X.PagedList.Web.Common
+<div id="list" class="content-wrapper">
+    <p>
+        <a class="btn btn-info" asp-action="Create" data-toggle="modal" data-target="#myModal" id="btCreateN">Create New</a>
+    </p>
+    <table class="table table table-striped table-bordered text-left w-100">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>
+                    Mã phòng ban
+                </th>
+                <th>
+                    Tên phòng ban
+                </th>
+                <th>ACTION</th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+            @foreach (var pb in ViewBag.Names as IEnumerable<Phongban>)
+            {
+<tr>
+    <td>@pb.Id</td>
+    <td>@pb.Name</td>
+    <td><a class="btn btn-secondary btn-lg active" data-toggle="modal" data-target="#myModal" onclick="return _getById(@pb.Id)">Edit</a> | <a class="btn btn-secondary btn-lg active" onclick="return _delete(@pb.Id)">Delete</a></td>
+</tr>
+       }
+        </tbody>
+    </table>
+    <div class="text-center">
+      
+                        @{ 
+                            var pageRender = new PagedListRenderOptions
+                                {
+                                    MaximumPageNumbersToDisplay = 5,
+                                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                                    DisplayPageCountAndCurrentLocation = false,
+                                    UlElementClasses = new[] { "pagination" },
+
+                                 
+                                    ContainerDivClasses = new[] { "pagination-container" }
+                            
+                                }; 
+                         } 
+             
+        @Html.PagedListPager((IPagedList<Phongban>)ViewBag.Names, page => Url.Action("PageList", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(pageRender, new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "nameListContainer" }))
+    </div>
+   
+
+
+
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Phòng ban</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formStudent">
+                    <div class="form-group" id="Maphong">
+                        <label for="MaNhom">Mã Phòng Ban</label>
+                        <input type="text" class="form-control" id="idpb" placeholder="ID" value="ID" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Tên Phòng Ban </label>
+                        <input type="text" class="form-control" id="Namepb" placeholder="Tên phòng ban" required>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="return _add();" id="btnAdd">Add</button>
+                <button type="button" class="btn btn-primary" onclick="return _edit();" id="btnUpdate" style="display:none">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+<
+
+
