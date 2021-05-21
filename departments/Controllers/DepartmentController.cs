@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using departments.Models;
 using departments.BUS;
 
+
 namespace departments.Controllers
 {
-    
+   
     public class DepartmentController : Controller
     {
+        
        
         public IActionResult Index(int page = 1)
         {
@@ -21,85 +23,75 @@ namespace departments.Controllers
         }
         BusPhongban busPhongban = new BusPhongban();
         // GET: DepartmentController
+
+        [HttpGet]
+        [Route("/PageList/")]
         public ActionResult PageList(int page = 1)
         {
+            
             var listphongban = busPhongban.busList(page);
             ViewBag.Names = listphongban;
             return PartialView("_NameListPartial", ViewBag.Names);
         }
+        [Route("/_thempb/")]
+        public IActionResult Thempb()
+        {
+          
+            
+            return PartialView("_partialThempb");
+
+        }
+        [HttpPost]
+        
+       
+
+        public IActionResult ThemPB(Phongban pb)
+        {
+            
+                if (busPhongban.busAdd(pb))
+               return Json(new { status = 1, title = "", text = "Thêm thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
+            else
+               return Json(new { status = -2, title = "", text = "Thêm không thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
+        }
 
         
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+       
 
-        // GET: DepartmentController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+       
 
-        // POST: DepartmentController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        
+        [HttpGet]
+        [Route("/_EditDeparment/")]
+        public ActionResult _EditDeparment(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: DepartmentController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            if (busPhongban.busList(id) == null)
+            if (busPhongban.GetPhong(id) == null)
             {
                 return NotFound();
             }
             else
-                return PartialView("edit", busPhongban.busList(id));
+                return PartialView("_partialedit", busPhongban.GetPhong(id));
         }
 
-        // POST: DepartmentController/Edit/5
+       
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+       
+        public ActionResult UpdatePb(Phongban pb)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+           
+            if (busPhongban.busUpdate(pb))
+                return Json(new { status = 1, title = "", text = "Cập nhật thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
+            else
+                return Json(new { status = -2, title = "", text = "Cập nhật không thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
-        // GET: DepartmentController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: DepartmentController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+
+        public ActionResult DeletePb(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            if (busPhongban.busDelete(id)) 
+                return Json(new { status = 1, title = "", text = "Cập nhật thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
+            else
+                return Json(new { status = -2, title = "", text = "Cập nhật không thành công.", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
         }
     }
 }

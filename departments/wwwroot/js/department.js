@@ -1,127 +1,172 @@
-﻿$(document).ready(
+﻿
+var $id = "";
+var $modal = $('#myModal');
+var $myModalContent = $("#myModalContent");
+var $modalins = $('#myModalins');
+var $myModalContentins = $("#myModalContentins");
+var $myModalTitle = $("#myModalTitle");
+var $myModalTitleins = $("#myModalTitleins");
+
+$(document).ready(
     
     function () {
-
-
-        $('#btCreateN').click(function () {
-
-
-            $('#Namepb').val('');
-            $('#idpb').val("ID");
-            $('#Maphong').hide();
-
-            $('#btnUpdate').hide();
-            $('#btnAdd').show();
+         $("#btSave").click(function () {
+             var data = {};
+             data.Id = 1;
+             data.Name = $('#Namepbins').val()
+             $.ajax({
+                 type: "POST",
+                 url: "/Department/ThemPb",
+                 dataType: "json",
+                 data: data,
+                 success: function (result) {
+                    $('#preloader-wrapper').toggleClass('hide');
+                     if (result.status >= 1) {
+                         reloadpage(1);
+                    }
+                    else {
+                        alert("Thêm thất bại")
+                    }
+                 },
+                 error: function (errormessage) {
+                     alert(errormessage.responseText);
+                 },
+                 failure: function (message) {
+                    $('#preloader-wrapper').toggleClass('hide');
+                }
+             });
+         });
+        $("#btupdate").click(function () {
+            var data = {};
+            data.Id = $('#idpb').val();
+            data.Name = $('#namepb').val()
+            $.ajax({
+                type: "POST",
+                url: "/Department/UpdatePb",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    $('#preloader-wrapper').toggleClass('hide');
+                    if (result.status >= 1) {
+                        reloadpage(1);
+                    }
+                    else {
+                        alert("Cập nhật thất bại")
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                },
+                failure: function (message) {
+                    $('#preloader-wrapper').toggleClass('hide');
+                }
+            });
+        });
+        $("#btclose").click(function () {
+            
+            reloadpage(1);
         });
         
-        //_getAll();
+       
+      
     });
 
 
-
-function _add() {
-    var obj = {
-        
-        Name: $('#Namepb').val(),
-
-    }
+function reloadpage(page) {
     $.ajax({
-        url: '/api/Phongban',
-        data: JSON.stringify(obj),
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        statusCode: {
-            200: function () {
+        url: '/PageList/',
 
-                location.reload();
-                $('#myModal').modal('hide');
+        type: "Get",
+        timeout: 20000,
 
-
-
-             
-            },
-
-        }
-
-
-
-    });
-}
-function _edit() {
-    
-    var obj = {
-        Id: $('#idpb').val(),
-        Name: $('#Namepb').val(),
-
-    }
-
-    $.ajax({
-        url: '/api/Phongban',
-        data: JSON.stringify(obj),
-        type: "PUT",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        statusCode: {
-            200: function () {
-
-
-                location.reload();
-
-
-                $('#myModal').modal('hide');
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
-            }
-        }
-    });
-}
-
-function _getById(id) {
-    $.ajax({
-        url: '/api/Phongban/' + id,
-        // data: JSON.stringify(dto),
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-            $('#Maphong').show();
-            $('#idpb').val(result.Id);
-            $('#Namepb').val(result.Name);
-
-
-            $('#myModal').modal('show');
-            $('#btnUpdate').show();
-            $('#btnAdd').hide();
+        async: true,
+        data: {
+            page: page
         },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
+
+        success: function (result) {
+            $('#nameListContainer').html(result);
+        },
+        failure: function (message) {
+            $('#preloader-wrapper').toggleClass('hide');
         }
     });
-    return false;
+
+}
+
+
+
+
+function Edit(id_) {
+    $myModalContent.html("");
+    $myModalTitle.html("Cập nhật");
+    $.ajax({
+        url: '/_EditDeparment/' ,
+         
+        type: "Get",
+        timeout: 20000,
+        
+        async: true,
+        data: {
+            id: id_
+        },
+       
+        success: function (result) {
+            $myModalContent.html(result);
+            $('#btSave').hide();
+            $('#btupdate').show();
+            $modal.modal('show');
+          
+            $('#preloader-wrapper').toggleClass('hide');
+        },
+        failure: function (message) {
+            $('#preloader-wrapper').toggleClass('hide');
+        }
+    });
+}
+
+
+function showmodal() {
+
+    $myModalTitleins.html("Thêm");
+    $modalins.modal('show');
+    $('#Namepbins').val('');
+    $('#btSave').show();
+    $('#btupdate').hide();
+    $('#idpb').val("ID");
+
 }
 
 function _delete(id) {
     var cf = confirm('Bạn muốn xoá phòng ban này?');
     if (cf) {
         $.ajax({
-            url: '/api/Phongban/' + id,
-            type: "DELETE",
-            contentType: "application/json; charset=utf-8",
+            type: "POST",
+            url: "/Department/DeletePB",
             dataType: "json",
-            async: true,
-            statusCode: {
-                200: function () {
-                    location.reload();
+            data: { "id": id },
+            success: function (result) {
+                $('#preloader-wrapper').toggleClass('hide');
+                if (result.status >= 1) {
+                    reloadpage(1);
                 }
+                else {
+                    alert("Xoá thất bại")
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            },
+            failure: function (message) {
+                $('#preloader-wrapper').toggleClass('hide');
             }
-
-
-
         });
     }
-
-
-
+    
 }
+
+
+
+
+
+

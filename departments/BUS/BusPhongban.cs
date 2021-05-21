@@ -12,15 +12,12 @@ namespace departments.BUS
     public class BusPhongban : Controller
     {
 
-        private readonly DepartmentContext _context;
+        
         public BusPhongban()
         {
             
         }
-        public BusPhongban(DepartmentContext context)
-        {
-            _context = context;
-        }
+       
         // GET: BusPhongban
         public IPagedList<Phongban>  busList(int page)
         {
@@ -30,67 +27,108 @@ namespace departments.BUS
         }
 
         
-      
+      private static  int pageSize = 3;
 
-       
-        public ActionResult busAdd(Phongban phongban)
+
+        public bool busAdd(Phongban phongban)
         {
-            Phongban pb = new Phongban();
-            pb.Name = phongban.Name;
-            _context.Add(pb);
-            _context.SaveChangesAsync();
-            return Ok("Added");
+            try
+            {
+                using (var _context = new DepartmentContext())
+                {
+                    Phongban pb = new Phongban();
+                    pb.Name = phongban.Name;
+                    _context.Add(pb);
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+                
+            }
+            
+
+          
+           
         }
 
         public Phongban GetPhong(int id)
         {
-            var phongban = _context.Phongbans.Find(id);
-
-            if (phongban == null)
+            using (var _context = new DepartmentContext())
             {
-                return null;
+                var phongban = _context.Phongbans.Find(id);
+
+                if (phongban == null)
+                {
+                    return null;
+                }
+
+                return phongban;
             }
 
-            return phongban;
+              
         }
 
-        public IActionResult  busUpdate(int id, Phongban model )
+        public bool  busUpdate(Phongban model )
         {
-            if (!string.IsNullOrEmpty(model.Id.ToString()))
+            try
             {
-                var find =  _context.Set<Phongban>().FirstOrDefault(x => x.Id == model.Id);
-                if (find != null)
+                using (var _context = new DepartmentContext())
                 {
-                    find.Id = model.Id;
-                    find.Name = model.Name;
+                    var find = _context.Set<Phongban>().FirstOrDefault(x => x.Id == model.Id);
+                    if (find != null)
+                    {
+                        find.Id = model.Id;
+                        find.Name = model.Name;
 
-                    _context.Set<Phongban>().Attach(find);
-                    _context.SaveChangesAsync();
-                    return Ok("Saved");
-                }
-                else
-                {
-                    return NotFound();
+                        _context.Set<Phongban>().Attach(find);
+                        _context.SaveChanges();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }    
                 }
             }
-            else
+
+            catch (Exception e)
             {
-                return BadRequest();
+                Console.WriteLine(e);
+                return false;
             }
+                  
+              
+            
+           
         }
 
-       public IActionResult busDelete(int Id)
+       public bool busDelete(int Id)
         {
-            var phongban = _context.Phongbans.Find(Id);
-            if (phongban == null)
+            try
             {
-                return NotFound();
+                using (var _context = new DepartmentContext())
+                {
+                    var phongban = _context.Phongbans.Find(Id);
+                   
+
+                    _context.Phongbans.Remove(phongban);
+                    _context.SaveChanges();
+
+                    return true;
+
+                }
+            }   
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
             }
-
-            _context.Phongbans.Remove(phongban);
-            _context.SaveChanges();
-
-            return Ok("Xoá thành công");
+            
+         
         }
 
         public IPagedList<Phongban>  GetOnePageOfNames(int page = 1)
@@ -109,7 +147,7 @@ namespace departments.BUS
             var listUnpaged = GetStuffFromDatabase();
 
      
-            const int pageSize = 3;
+           
             var listPaged = listUnpaged.ToPagedList(page ?? 1, pageSize);
 
            
@@ -118,6 +156,45 @@ namespace departments.BUS
 
             return listPaged;
         }
+        protected IPagedList<Phongban> busSearchListPb(PhongBanSearchModel model)
+        {
+
+            IEnumerable<Phongban> listUnpaged;
+            using (var dataContext = new DepartmentContext())
+            {
+                 
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    listUnpaged = GetStuffFromDatabase();
+                }    
+                else
+                {
+                    listUnpaged = GetStuffFromDatabase().Where(x => x.Name.Contains(model.Name));
+                }
+
+                if (model.Page.HasValue && model.Page < 1)
+                    return null;
+
+
+               
+
+
+
+                var listPaged = listUnpaged.ToPagedList(model.Page ?? 1, pageSize);
+
+
+                if (listPaged.PageNumber != 1 && model.Page.HasValue && model.Page > listPaged.PageCount)
+                    return null;
+
+                return listPaged;
+
+            }
+
+
+           
+        }
+
+
 
         protected IEnumerable<Phongban> GetStuffFromDatabase()
         {

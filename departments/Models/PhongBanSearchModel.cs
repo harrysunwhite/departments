@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace departments.Models
 {
-    public class Phongbanmodel
+    public class PhongBanSearchModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int? Page  { get; set; }
     }
 }
