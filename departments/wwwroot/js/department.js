@@ -10,6 +10,7 @@ var $myModalTitleins = $("#myModalTitleins");
 $(document).ready(
     
     function () {
+      
          $("#btSave").click(function () {
              var data = {};
              data.Id = 1;
@@ -22,10 +23,12 @@ $(document).ready(
                  success: function (result) {
                     $('#preloader-wrapper').toggleClass('hide');
                      if (result.status >= 1) {
+                         console.log(result.text);
+                         toastr.success(result.text);
                          reloadpage(1);
                     }
                     else {
-                        alert("Thêm thất bại")
+                         toastr.danger(result.text);
                     }
                  },
                  error: function (errormessage) {
@@ -48,7 +51,8 @@ $(document).ready(
                 success: function (result) {
                     $('#preloader-wrapper').toggleClass('hide');
                     if (result.status >= 1) {
-                        reloadpage(1);
+                        toastr.success(result.text);
+                        reloadpage();
                     }
                     else {
                         alert("Cập nhật thất bại")
@@ -64,7 +68,11 @@ $(document).ready(
         });
         $("#btclose").click(function () {
             
-            reloadpage(1);
+            reloadpage();
+        });
+        $("#btcloseins").click(function () {
+
+            reloadpage();
         });
         
        
@@ -72,7 +80,14 @@ $(document).ready(
     });
 
 
-function reloadpage(page) {
+
+function reloadpage() {
+
+
+    obj = {};
+    obj.id = 1,
+        obj.Name = "";
+    obj.Page = 1;
     $.ajax({
         url: '/PageList/',
 
@@ -80,18 +95,21 @@ function reloadpage(page) {
         timeout: 20000,
 
         async: true,
-        data: {
-            page: page
-        },
+        dataType: "json",
+        data: obj,
 
         success: function (result) {
+
             $('#nameListContainer').html(result);
+        },
+        error: function (errormessage) {
+
+            $('#nameListContainer').html(errormessage.responseText);
         },
         failure: function (message) {
             $('#preloader-wrapper').toggleClass('hide');
         }
     });
-
 }
 
 
@@ -116,6 +134,7 @@ function Edit(id_) {
             $('#btSave').hide();
             $('#btupdate').show();
             $modal.modal('show');
+        
           
             $('#preloader-wrapper').toggleClass('hide');
         },
@@ -148,7 +167,9 @@ function _delete(id) {
             success: function (result) {
                 $('#preloader-wrapper').toggleClass('hide');
                 if (result.status >= 1) {
-                    reloadpage(1);
+                    toastr.success(result.text);
+                    
+                    reloadpage();
                 }
                 else {
                     alert("Xoá thất bại")
@@ -164,6 +185,77 @@ function _delete(id) {
     }
     
 }
+
+function Timkiem() {
+   
+
+    obj = {};
+    obj.id = 1,
+        obj.Name = $('#txtSearch').val();
+    obj.Page = 1;
+    $.ajax({
+        url: '/PageList/',
+        
+        type: "Get",
+        timeout: 20000,
+
+        async: true,
+        dataType: "json",
+        data: obj,
+
+        success: function (result) {
+            if (result.status == -2) {
+                toastr.success(result.text);
+
+            }
+            else {
+
+                $('#nameListContainer').html(result);
+            }
+            
+            
+        },
+        error: function (errormessage) {
+            console.log(errormessage.responseText);
+            $('#nameListContainer').html(errormessage.responseText);
+        },
+        failure: function (message) {
+            $('#preloader-wrapper').toggleClass('hide');
+        }
+    });
+}
+
+function Clear() {
+
+
+    obj = {};
+    obj.id = 1,
+        obj.Name = "";
+    obj.Page = 1;
+    $.ajax({
+        url: '/PageList/',
+
+        type: "Get",
+        timeout: 20000,
+
+        async: true,
+        dataType: "json",
+        data: obj,
+
+        success: function (result) {
+
+            $('#nameListContainer').html(result);
+        },
+        error: function (errormessage) {
+
+            $('#nameListContainer').html(errormessage.responseText);
+        },
+        failure: function (message) {
+            $('#preloader-wrapper').toggleClass('hide');
+        }
+    });
+}
+
 
 
 

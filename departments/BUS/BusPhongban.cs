@@ -19,17 +19,15 @@ namespace departments.BUS
         }
        
         // GET: BusPhongban
-        public IPagedList<Phongban>  busList(int page)
+        public IPagedList<Phongban>  busList(PhongBanSearchModel phongBan)
         {
-            return GetPagedNames(page);
+            return busSearchListPb(phongBan);
            
            
         }
 
         
-      private static  int pageSize = 3;
-
-
+         private static  int pageSize = 3;
         public bool busAdd(Phongban phongban)
         {
             try
@@ -48,11 +46,7 @@ namespace departments.BUS
                 Console.WriteLine(ex);
                 return false;
                 
-            }
-            
-
-          
-           
+            }      
         }
 
         public Phongban GetPhong(int id)
@@ -65,13 +59,10 @@ namespace departments.BUS
                 {
                     return null;
                 }
-
                 return phongban;
             }
-
               
         }
-
         public bool  busUpdate(Phongban model )
         {
             try
@@ -131,31 +122,31 @@ namespace departments.BUS
          
         }
 
-        public IPagedList<Phongban>  GetOnePageOfNames(int page = 1)
+        public IPagedList<Phongban>  GetOnePageOfNames(PhongBanSearchModel phongBan)
         {
-            return GetPagedNames(page);
+            return busSearchListPb(phongBan);
            
         }
 
-        protected IPagedList<Phongban> GetPagedNames(int? page)
-        {
+        //protected IPagedList<Phongban> GetPagedNames(int? page)
+        //{
 
-            if (page.HasValue && page < 1)
-                return null;
+        //    if (page.HasValue && page < 1)
+        //        return null;
 
          
-            var listUnpaged = GetStuffFromDatabase();
+        //    var listUnpaged = GetStuffFromDatabase();
 
      
            
-            var listPaged = listUnpaged.ToPagedList(page ?? 1, pageSize);
+        //    var listPaged = listUnpaged.ToPagedList(page ?? 1, pageSize);
 
            
-            if (listPaged.PageNumber != 1 && page.HasValue && page > listPaged.PageCount)
-                return null;
+        //    if (listPaged.PageNumber != 1 && page.HasValue && page > listPaged.PageCount)
+        //        return null;
 
-            return listPaged;
-        }
+        //    return listPaged;
+        //}
         protected IPagedList<Phongban> busSearchListPb(PhongBanSearchModel model)
         {
 
@@ -169,17 +160,8 @@ namespace departments.BUS
                 }    
                 else
                 {
-                    listUnpaged = GetStuffFromDatabase().Where(x => x.Name.Contains(model.Name));
+                    listUnpaged = GetStuffFromDatabase().Where(x => x.Name.ToUpper().Contains(model.Name.ToUpper()));
                 }
-
-                if (model.Page.HasValue && model.Page < 1)
-                    return null;
-
-
-               
-
-
-
                 var listPaged = listUnpaged.ToPagedList(model.Page ?? 1, pageSize);
 
 

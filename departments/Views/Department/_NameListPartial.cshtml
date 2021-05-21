@@ -7,11 +7,18 @@
 @using X.PagedList;
 @using X.PagedList.Web.Common
 <div id="list" class="content-wrapper">
-    <p>
-        <a class="btn btn-info"  onclick="showmodal()" id="btCreateN">Create New</a>
-    </p>
-    <table class="table table table-striped table-bordered text-left w-100">
-        <thead class="bg-dark text-white">
+    <div class="mb-3">
+      
+        <button type="button" class="btn btn-sm btn-success mr-2" onclick="showmodal()" id="btCreateN"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Tạo mới</button>
+        <input type="text" id="txtSearch" class="mr-2 mt-1 form-control-sm" />
+        <button type="button" class="btn btn-success btn-sm mr-2" onclick="Timkiem()" id="btSeach"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;Tìm theo tên</button>
+        <button type="button" class="btn btn-success mr-2 btn-sm" onclick="Clear()" id="btSeach"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Làm mới</button>
+    </div>
+    
+      
+    
+    <table class="table table table-striped table-bordered text-left w-100 " style="font-size:small">
+        <thead class="bg-success">
             <tr>
                 <th>
                     Mã phòng ban
@@ -28,29 +35,32 @@
 <tr>
     <td>@pb.Id</td>
     <td>@pb.Name</td>
-    <td><a class="btn btn-secondary btn-lg active"  onclick="Edit(@pb.Id)">Edit</a> | <a class="btn btn-secondary btn-lg active" onclick="_delete(@pb.Id)">Delete</a></td>
+    <td><a class="btn btn-info btn-sm btn-sm active"  onclick="Edit(@pb.Id)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> | <a class="btn btn-danger btn-sm active" onclick="_delete(@pb.Id)"> <i class="fa fa-trash"></i></a></td>
 </tr>
        }
         </tbody>
     </table>
-    <div class="text-center">
+    <div class="text-right">
       
                         @{ 
-                            var pageRender = new PagedListRenderOptions
+                                var pageRender = new PagedListRenderOptions
                                 {
                                     MaximumPageNumbersToDisplay = 5,
                                     DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                                    DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+                                    DisplayLinkToLastPage = PagedListDisplayMode.Never,
                                     DisplayLinkToNextPage = PagedListDisplayMode.Always,
                                     DisplayPageCountAndCurrentLocation = false,
                                     UlElementClasses = new[] { "pagination" },
 
                                  
                                     ContainerDivClasses = new[] { "pagination-container" }
-                            
-                                }; 
+
+
+                                };
                          } 
              
-        @Html.PagedListPager((IPagedList<Phongban>)ViewBag.Names, page => Url.Action("PageList", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(pageRender, new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "nameListContainer" }))
+        @Html.PagedListPager((IPagedList<Phongban>)ViewBag.Names, page => Url.Action("PageList", new { page,Name = (ViewBag.Data as PhongBanSearchModel).Name }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(pageRender, new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "nameListContainer" }))
     </div>
    
 
