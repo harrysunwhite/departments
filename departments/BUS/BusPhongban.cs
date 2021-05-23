@@ -27,7 +27,7 @@ namespace departments.BUS
         }
 
         
-         private static  int pageSize = 3;
+         private static  int pageSize = 6;
         public bool busAdd(Phongban phongban)
         {
             try

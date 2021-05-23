@@ -94,18 +94,15 @@ function reloadpage() {
         type: "Get",
         timeout: 20000,
 
-        async: true,
-        dataType: "json",
+        async: false,
+        
         data: obj,
 
         success: function (result) {
 
             $('#nameListContainer').html(result);
         },
-        error: function (errormessage) {
-
-            $('#nameListContainer').html(errormessage.responseText);
-        },
+        
         failure: function (message) {
             $('#preloader-wrapper').toggleClass('hide');
         }
@@ -172,7 +169,7 @@ function _delete(id) {
                     reloadpage();
                 }
                 else {
-                    alert("Xoá thất bại")
+                    toastr.danger(result.text);
                 }
             },
             error: function (errormessage) {
@@ -199,9 +196,10 @@ function Timkiem() {
         type: "Get",
         timeout: 20000,
 
-        async: true,
-        dataType: "json",
+        async: false,
+       
         data: obj,
+          
 
         success: function (result) {
             if (result.status == -2) {
@@ -215,10 +213,7 @@ function Timkiem() {
             
             
         },
-        error: function (errormessage) {
-            console.log(errormessage.responseText);
-            $('#nameListContainer').html(errormessage.responseText);
-        },
+       
         failure: function (message) {
             $('#preloader-wrapper').toggleClass('hide');
         }
@@ -238,18 +233,15 @@ function Clear() {
         type: "Get",
         timeout: 20000,
 
-        async: true,
-        dataType: "json",
+        async: false,
+      
         data: obj,
 
         success: function (result) {
 
             $('#nameListContainer').html(result);
         },
-        error: function (errormessage) {
-
-            $('#nameListContainer').html(errormessage.responseText);
-        },
+       
         failure: function (message) {
             $('#preloader-wrapper').toggleClass('hide');
         }

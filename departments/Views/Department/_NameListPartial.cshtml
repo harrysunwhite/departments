@@ -15,49 +15,53 @@
         <button type="button" class="btn btn-success mr-2 btn-sm" onclick="Clear()" id="btSeach"><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Làm mới</button>
     </div>
     
-      
+    <div style="min-height:400px">
+        <table class="table table table-striped table-bordered text-left w-100 " style="font-size:small">
+            <thead class="bg-success">
+                <tr>
+                    <th>
+                        Mã phòng ban
+                    </th>
+                    <th>
+                        Tên phòng ban
+                    </th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                @foreach (var pb in ViewBag.Names as IEnumerable<Phongban>)
+                {
+                    <tr>
+                        <td>@pb.Id</td>
+                        <td>@pb.Name</td>
+                        <td><a class="btn btn-info btn-sm btn-sm active" onclick="Edit(@pb.Id)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> | <a class="btn btn-danger btn-sm active" onclick="_delete(@pb.Id)"> <i class="fa fa-trash"></i></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     
-    <table class="table table table-striped table-bordered text-left w-100 " style="font-size:small">
-        <thead class="bg-success">
-            <tr>
-                <th>
-                    Mã phòng ban
-                </th>
-                <th>
-                    Tên phòng ban
-                </th>
-                <th>ACTION</th>
-            </tr>
-        </thead>
-        <tbody class="tbody">
-            @foreach (var pb in ViewBag.Names as IEnumerable<Phongban>)
-            {
-<tr>
-    <td>@pb.Id</td>
-    <td>@pb.Name</td>
-    <td><a class="btn btn-info btn-sm btn-sm active"  onclick="Edit(@pb.Id)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a> | <a class="btn btn-danger btn-sm active" onclick="_delete(@pb.Id)"> <i class="fa fa-trash"></i></a></td>
-</tr>
-       }
-        </tbody>
-    </table>
+    
     <div class="text-right">
       
                         @{ 
-                                var pageRender = new PagedListRenderOptions
-                                {
-                                    MaximumPageNumbersToDisplay = 5,
-                                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                                    DisplayLinkToFirstPage = PagedListDisplayMode.Never,
-                                    DisplayLinkToLastPage = PagedListDisplayMode.Never,
-                                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
-                                    DisplayPageCountAndCurrentLocation = false,
-                                    UlElementClasses = new[] { "pagination" },
+                            var pageRender = new PagedListRenderOptions
+                            {
+                                MaximumPageNumbersToDisplay = 5,
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                                DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+                                DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                                DisplayPageCountAndCurrentLocation = false,
+                                UlElementClasses = new[] { "pagination" },
+                                LiElementClasses = new string[] { "page-item" },
+                                PageClasses = new string[] { "page-link" },
 
-                                 
-                                    ContainerDivClasses = new[] { "pagination-container" }
+
+                                ContainerDivClasses = new[] { "pagination-container" }
 
 
-                                };
+                            };
                          } 
              
         @Html.PagedListPager((IPagedList<Phongban>)ViewBag.Names, page => Url.Action("PageList", new { page,Name = (ViewBag.Data as PhongBanSearchModel).Name }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(pageRender, new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "nameListContainer" }))

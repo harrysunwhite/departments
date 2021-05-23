@@ -30,8 +30,9 @@ namespace departments.Controllers
         [Route("/PageList/")]
         public ActionResult PageList(PhongBanSearchModel phongBan)
         {
-          if  (busPhongban.busList(phongBan) != null)
+          if  (busPhongban.busList(phongBan).Count()>0)
             {
+               
                 if (!phongBan.Page.HasValue) phongBan.Page = 1;
 
 
@@ -43,6 +44,7 @@ namespace departments.Controllers
             }
           else
             {
+                
                 return Json(new { status = -2, title = "", text = "Không tìm thấy phòng ban phù hợp", obj = "" }, new Newtonsoft.Json.JsonSerializerSettings());
             }    
           
